@@ -88,7 +88,7 @@ if sys.platform == 'win32':
     link_args.append('/openmp')
 
 elif sys.platform == 'linux':
-    link_args.append('/openmp')
+    link_args.append('-fopenmp')
     cl_opts.append('-fopenmp')
 
 ext_modules = [
@@ -187,7 +187,7 @@ setup(
     ext_modules=ext_modules,
     install_requires=['pybind11>=2.3'],
     setup_requires=['pybind11>=2.3'],
-    cmdclass={'build_ext': BuildExt},
+    # cmdclass={'build_ext': BuildExt},
     # packages=find_packages(where='.'),
     packages=['pyinterpolate'],
     # package_dir={'pyinterpolate22': 'pyinterpolate'},
