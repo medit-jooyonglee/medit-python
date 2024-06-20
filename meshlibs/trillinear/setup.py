@@ -81,6 +81,15 @@ class get_pybind_include(object):
         import pybind11
         return pybind11.get_include(self.user)
 
+cl_opts = []
+link_args = []
+if sys.platform == 'win32':
+    cl_opts.extend(['/EHsc', '/openmp'])
+    link_args.append('/openmp')
+
+elif sys.platform == 'linux':
+    link_args.append('/openmp')
+    cl_opts.append('-fopenmp')
 
 ext_modules = [
     Extension(        
@@ -88,13 +97,13 @@ ext_modules = [
         [*source_files],
         include_dirs=[
             # Path to pybind11 headers
-            # get_pybind_include(),
-            # get_pybind_include(user=True),
+            get_pybind_include(),
+            get_pybind_include(user=True),
 			*eigen_path
 			
         ],
-        extra_compile_args = ['-fopenmp',],
-        extra_link_args=['-fopenmp'],
+        extra_compile_args = cl_opts,
+        extra_link_args=link_args,
         # ext.extra_link_args = link_opts
         language='c++'
     ),
@@ -130,79 +139,81 @@ def cpp_flag(compiler):
     raise RuntimeError('Unsupported compiler -- at least C++11 support '
                        'is needed!')
 #
-#
-# class BuildExt(build_ext):
-#     """A custom build extension for adding compiler-specific options."""
-#     c_opts = {
-#         'msvc': ['/EHsc', '/openmp'],
-#         'unix': ['/openmp'],
-#     }
-#     l_opts = {
-#         'msvc': [],
-#         'unix': ['/openmp',
-#                  '-Ofast' '-xHost', '-qopenmp',
-#                  # '/qopenmp', ['-fopenmp']
-#                  ]
-#     }
-#
-#     if sys.platform == 'darwin':
-#         darwin_opts = ['-stdlib=libc++', '-mmacosx-version-min=10.7']
-#         c_opts['unix'] += darwin_opts
-#         l_opts['unix'] += darwin_opts
-#
-#     def build_extensions(self):
-#         ct = self.compiler.compiler_type
-#         opts = self.c_opts.get(ct, [])
-#         link_opts = self.l_opts.get(ct, [])
-#
-#         if ct == 'unix':
-#             opts.append('-DVERSION_INFO="%s"' % self.distribution.get_version())
-#             opts.append(cpp_flag(self.compiler))
-#             if has_flag(self.compiler, '-fvisibility=hidden'):
-#                 opts.append('-fvisibility=hidden')
-#         elif ct == 'msvc':
-#             opts.append('/DVERSION_INFO=\\"%s\\"' % self.distribution.get_version())
-#         for ext in self.extensions:
-#             ext.extra_compile_args = opts
-#             ext.extra_link_args = link_opts
-#         build_ext.build_extensions(self)
-# #
-# setup(
-#     name='pyinterpolate',
-#     version=__version__,
-#     author='jooyongLee',
-#     author_email='yong86@dio.co.kr',
-#     url='',
-#     description='--- project using pybind11',
-#     long_description='',
-#     ext_modules=ext_modules,
-#     install_requires=['pybind11>=2.3'],
-#     setup_requires=['pybind11>=2.3'],
-#     # cmdclass={'build_ext': BuildExt},
-#     # packages=find_packages(where='.'),
-#     packages=['pyinterpolate'],
-#     # package_dir={'pyinterpolate22': 'pyinterpolate'},
-#     # py_modules=['pyinterpolate'],
-#     zip_safe=False,
-# )
 
+class BuildExt(build_ext):
+    """A custom build extension for adding compiler-specific options."""
+    c_opts = {
+        'msvc': ['/EHsc', '/openmp'],
+        'unix': ['/openmp'],
+    }
+    l_opts = {
+        'msvc': [],
+        'unix': ['/openmp',
+                 '-Ofast' '-xHost', '-qopenmp',
+                 # '/qopenmp', ['-fopenmp']
+                 ]
+    }
+
+    if sys.platform == 'darwin':
+        darwin_opts = ['-stdlib=libc++', '-mmacosx-version-min=10.7']
+        c_opts['unix'] += darwin_opts
+        l_opts['unix'] += darwin_opts
+
+    def build_extensions(self):
+        ct = self.compiler.compiler_type
+        opts = self.c_opts.get(ct, [])
+        link_opts = self.l_opts.get(ct, [])
+
+        if ct == 'unix':
+            opts.append('-DVERSION_INFO="%s"' % self.distribution.get_version())
+            opts.append(cpp_flag(self.compiler))
+            if has_flag(self.compiler, '-fvisibility=hidden'):
+                opts.append('-fvisibility=hidden')
+        elif ct == 'msvc':
+            opts.append('/DVERSION_INFO=\\"%s\\"' % self.distribution.get_version())
+        for ext in self.extensions:
+            ext.extra_compile_args = opts
+            ext.extra_link_args = link_opts
+        build_ext.build_extensions(self)
 
 setup(
-    name="pyinterpolate",
+    name='pyinterpolate',
     version=__version__,
-    author="Sylvain Corlay",
-    author_email="sylvain.corlay@gmail.com",
-    # url="https://github.com/pybind/python_example",
+    author='jooyongLee',
+    author_email='yong86@dio.co.kr',
     url='',
-    description="A test project using pybind11",
-    long_description="",
+    description='--- project using pybind11',
+    long_description='',
     ext_modules=ext_modules,
-    # extras_require={"test": "pytest"},
-    # Currently, build_ext only provides an optional "highest supported C++
-    # level" feature, but in the future it may provide more features.
+    install_requires=['pybind11>=2.3'],
+    setup_requires=['pybind11>=2.3'],
+    cmdclass={'build_ext': BuildExt},
+    # packages=find_packages(where='.'),
     packages=['pyinterpolate'],
-
-    cmdclass={"build_ext": build_ext},
+    # package_dir={'pyinterpolate22': 'pyinterpolate'},
+    # py_modules=['pyinterpolate'],
     zip_safe=False,
-    python_requires=">=3.7",
 )
+#
+#
+# setup(
+#     name="pyinterpolate",
+#     version=__version__,
+#     author="Sylvain Corlay",
+#     author_email="sylvain.corlay@gmail.com",
+#     # url="https://github.com/pybind/python_example",
+#     url='',
+#     description="A test project using pybind11",
+#     long_description="",
+#     ext_modules=ext_modules,
+#     # extras_require={"test": "pytest"},
+#     # Currently, build_ext only provides an optional "highest supported C++
+#     # level" feature, but in the future it may provide more features.
+#     packages=['pyinterpolate'],
+#     install_requires=['pybind11>=2.3'],
+#     setup_requires=['pybind11>=2.3'],
+#
+#     cmdclass={"build_ext": build_ext},
+#     zip_safe=False,
+#     python_requires=">=3.7",
+# )

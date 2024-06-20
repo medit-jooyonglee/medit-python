@@ -25,7 +25,7 @@ int sum_thread_ids() {
     int sum=0;
     #pragma omp parallel shared(sum)
     {
-        sleep(3);
+//        sleep(3);
         #pragma omp critical
         sum += omp_get_thread_num();
     }
