@@ -1,4 +1,3 @@
-import vtk
 from pyInterpolator import CTrillinearf, CTrillineard
 # CTrillinearf
 import time
