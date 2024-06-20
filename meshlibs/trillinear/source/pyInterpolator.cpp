@@ -36,9 +36,9 @@ void pybind_interpolatorf(py::module_ &m){
             return v;
         }));
 
-    py::enum_<CTrillinear<Real>::Method>(trilf, "Method")
-        .value("NEAREST", CTrillinear<Real>::Method::NEAREST)
-        .value("LINEAR", CTrillinear<Real>::Method::LINEAR)
+    py::enum_<Method>(trilf, "Method", py::module_local())
+        .value("NEAREST", Method::NEAREST)
+        .value("LINEAR", Method::LINEAR)
         .export_values();
 }
 
@@ -46,9 +46,9 @@ void pybind_interpolatorf(py::module_ &m){
 
 template<typename Real>
 void pybind_interpolatord(py::module_& m) {
-    py::class_<CTrillinear<Real>> trilf(m, "CTrillineard");
+    py::class_<CTrillinear<Real>> trild(m, "CTrillineard");
 
-    trilf.def(py::init<>())
+    trild.def(py::init<>())
         .def("interpolate", &CTrillinear<Real>::interpolate, "some method interpolate")
         .def_readwrite("_method", &CTrillinear<Real>::_method)
         .def("debug_print", &CTrillinear<Real>::debug_print)
@@ -72,10 +72,11 @@ void pybind_interpolatord(py::module_& m) {
         return v;
             }));
 
-    py::enum_<CTrillinear<Real>::Method>(trilf, "Method")
-        .value("NEAREST", CTrillinear<Real>::Method::NEAREST)
-        .value("LINEAR", CTrillinear<Real>::Method::LINEAR)
-        .export_values();
+    // https://stackoverflow.com/questions/76072215/pybind11-generic-type-type-is-already-registered-when-importing-two-modul
+//    py::enum_<Method>(trild, "Method", py::module_local())
+//         .value("NEAREST", Method::NEAREST)
+//         .value("LINEAR", Method::LINEAR)
+//        .export_values();
 }
 
 

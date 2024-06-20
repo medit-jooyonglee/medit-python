@@ -3,6 +3,17 @@
 #include <iostream>
 #include <omp.h>
 
+#ifdef _WIN32
+#else
+#ifndef __min
+    #define __min(a, b) (((a) < (b)) ? (a) : (b))
+#endif //
+
+#ifndef __max
+    #define __max(a, b) (((a) > (b)) ? (a) : (b))
+#endif //
+#endif //
+
 template<typename T>
 T interpolate_trillinear(T p[], T x, T y, T z)
 {
@@ -14,7 +25,7 @@ T interpolate_trillinear(T p[], T x, T y, T z)
 template<typename T>
 CTrillinear<T>::CTrillinear(const MatrixXr& img,
         Eigen::Vector3i & shape,
-        CTrillinear::Method method,
+        Method method,
         bool bound_error, float bound_value)
 	: step0(0)
 	, step1(0)

@@ -1,5 +1,6 @@
 #include "SharedMemoryHeader.h"
 
+#include <cstring>
 #include <fstream>
 
 /**

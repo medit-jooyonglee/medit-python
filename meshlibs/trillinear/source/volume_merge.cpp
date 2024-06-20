@@ -3,6 +3,17 @@
 #include <iostream>
 #include <omp.h>
 
+#ifdef _WIN32
+#else
+#ifndef __min
+    #define __min(a, b) (((a) < (b)) ? (a) : (b))
+#endif //
+
+#ifndef __max
+    #define __max(a, b) (((a) > (b)) ? (a) : (b))
+#endif //
+#endif //
+
 bool VolumeMerge::merge( Volume& fullvolume, const std::vector<Volume>& split_volume, const Eigen::MatrixXi& bboxes)
 {
 	if (split_volume.size() == bboxes.size() && split_volume.size() > 0 )
@@ -74,7 +85,7 @@ bool VolumeMerge::merge( Volume& fullvolume, const std::vector<Volume>& split_vo
 
 void Volume::init_counters()
 {
-	size_t total_elem = 1;
+	long total_elem = 1;
 	for (const auto v : this->shape)
 		total_elem *= v;
 
@@ -83,7 +94,7 @@ void Volume::init_counters()
 
 void Volume::divide_counter()
 {
-	size_t total_elem = 1;
+	long total_elem = 1;
 	for (const auto v : this->shape)
 		total_elem *= v;
 

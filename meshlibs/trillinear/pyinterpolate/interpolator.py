@@ -1,9 +1,11 @@
+import vtk
 from pyInterpolator import CTrillinearf, CTrillineard
-
+# CTrillinearf
 import time
 import numpy as np
-
-
+# import vtk
+# vtk.vtkPolyData
+# CTrillinearf
 def is_sliced_numpy(arr:np.ndarray):
     """
     checked if array is sliced
@@ -28,8 +30,8 @@ class TrilinearInterpolator(object):
         }
 
         method_dictd = {
-            "linear" : CTrillineard.Method.LINEAR,
-            "nearest": CTrillineard.Method.NEAREST
+            "linear" : CTrillinearf.Method.LINEAR,
+            "nearest": CTrillinearf.Method.NEAREST
         }
         # method_dictf =
         if is_sliced_numpy(voxels):

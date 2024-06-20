@@ -32,15 +32,17 @@ inline T interpolate_trillinear(T p[2][2][2], T x, T y, T z)
 		p[1][1][1] * nx * nx * nz;
 }
 
+enum Method {
+    NEAREST = 0,
+    LINEAR
+};
+
 template<typename T>
 class CTrillinear
 {
 public:
 	typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>  MatrixXr;
-    enum Method {
-        NEAREST = 0,
-        LINEAR
-    };
+
 	CTrillinear() = default;	
 	CTrillinear(const MatrixXr&img, Eigen::Vector3i &shape, Method method=LINEAR, bool bound_error=true, float bound_value = 0.0f);
 

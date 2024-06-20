@@ -18,15 +18,42 @@ void pybind_volume_merge(py::module_& m);
 
 void pybind_sharedmemoryheader(py::module_& m);
 
+
+
+// Sums the id of all threads
+int sum_thread_ids() {
+    int sum=0;
+    #pragma omp parallel shared(sum)
+    {
+        sleep(3);
+        #pragma omp critical
+        sum += omp_get_thread_num();
+    }
+    return sum;
+}
+void pybind_openm(py::module_& m)
+{
+//    m.def("get_max_threads", &omp_get_max_threads, "Returns max number of threads");
+//    m.def("set_num_threads", &omp_set_num_threads, "Set number of threads");
+    m.def("sum_thread_ids", &sum_thread_ids, "Adds the id of threads");
+}
+
+//
+//PYBIND11_MODULE(example, m) {
+//
+//}
+
 PYBIND11_MODULE(pyInterpolator, m) {
-	pybind_interpolatord<double>(m);
 	pybind_interpolatorf<float>(m);
+//	sdfd
+	pybind_interpolatord<double>(m);
 	pybind_volume_merge(m);
 
 	pybind_sharedmemoryheader(m);
+	pybind_openm(m);
 }
 //
-//PYBIND11_MODULE(pyInterpolator, m) {
+//PYBIND11_MODULE(pyInterpolator, m) {py
 //    py::class_<CTrillinear> tril(m, "CTrillinear");
 //
 //    tril.def(py::init<>())
